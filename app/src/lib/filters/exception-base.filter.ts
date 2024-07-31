@@ -25,14 +25,6 @@ export class ExceptionBaseFilter implements ExceptionFilter {
     const ctx: HttpArgumentsHost = host.switchToHttp();
 
     const response: ApiErrorResponse = {
-      /**
-       * TODO: use `interceptor` instead of creating `Date` instance here. It's
-       * really bad and inaccurate since the date/time of the request might or is
-       * not exactly the time where the request is sent.
-       *
-       * {@link https://docs.nestjs.com/interceptors}
-       */
-      requestedAt: new Date(),
       error: {
         message: exception.message,
         issues: exception.errors,

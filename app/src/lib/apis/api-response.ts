@@ -3,6 +3,5 @@ export interface ApiResponse<
 > {
   message: string;
   data?: D;
-  requestedAt: Date;
   status: number;
 }

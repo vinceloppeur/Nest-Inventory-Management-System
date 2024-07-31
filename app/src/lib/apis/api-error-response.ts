@@ -19,11 +19,6 @@ export interface ApiErrorResponse {
   };
   /**
    * @public
-   * the date/time which the request is sent by the client.
-   */
-  requestedAt: Date;
-  /**
-   * @public
    * the status code response of the request (`4xx`-`5xx`). See
    * {@link https://developer.mozilla.org/en-US/docs/Web/HTTP/Status}.
    */
