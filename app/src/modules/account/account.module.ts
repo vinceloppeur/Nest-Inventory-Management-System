@@ -9,7 +9,7 @@ import { AccountController } from 'app/modules/account/account.controller';
 
 @Module({
   imports: [TypeOrmModule.forFeature([AccountSchema])],
-  exports: [AccountRepository, AccountService],
+  exports: [AccountFactory, AccountRepository, AccountService],
   providers: [AccountFactory, AccountRepository, AccountService],
   controllers: [AccountController],
 })
