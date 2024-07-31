@@ -1,15 +1,21 @@
 import type { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import * as env from 'env-var';
 
 import { AccountSchema } from 'app/modules/account/account.schema';
+import {
+  DATABASE_DB,
+  DATABASE_HOST,
+  DATABASE_PASSWORD,
+  DATABASE_PORT,
+  DATABASE_USER,
+} from 'app/configs/constants';
 
 export const typeorm_config: TypeOrmModuleOptions = {
   type: 'postgres',
-  host: env.get('DATABASE_HOST').required().asString(),
-  username: env.get('DATABASE_USER').required().asString(),
-  database: env.get('DATABASE_DB').required().asString(),
-  port: env.get('DATABASE_PORT').required().default(5432).asPortNumber(),
-  password: env.get('DATABASE_PASSWORD').required().asString(),
+  host: DATABASE_HOST,
+  username: DATABASE_USER,
+  database: DATABASE_DB,
+  port: DATABASE_PORT,
+  password: DATABASE_PASSWORD,
   synchronize: true,
   migrationsRun: false,
   entities: [AccountSchema],
