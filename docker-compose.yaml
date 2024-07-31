@@ -1,0 +1,28 @@
+services:
+  backend-nest-development:
+    build:
+      context: ./app
+      dockerfile: ./docker/development/Dockerfile
+    tty: true
+    hostname: backend
+    container_name: backend-nest-development
+    working_dir: /app
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - type: bind
+        source: ./app
+        target: /app
+    ports:
+      - "0.0.0.0:3000:3000/tcp"
+    networks:
+      - backend
+    environment:
+      - DATABASE_HOST=${DATABASE_HOST?error}
+      - DATABASE_USER=${DATABASE_USER?error}
+      - DATABASE_DB=${DATABASE_DB?error}
+      - DATABASE_PORT=${DATABASE_PORT?error}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD?error}
+
+networks:
+  backend:
