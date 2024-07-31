@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const CreateAccountRequestSchema = z.object({
+export const CreateAccountSchema = z.object({
   email: z.string({
     required_error: 'email cannot be empty',
     invalid_type_error: 'email must be a string',
@@ -15,9 +15,7 @@ export const CreateAccountRequestSchema = z.object({
   }),
 });
 
-export type CreateAccountRequestDto = z.infer<
-  typeof CreateAccountRequestSchema
->;
+export type CreateAccountRequestDto = z.infer<typeof CreateAccountSchema>;
 
 export type CreateAccountResponseDto = {
   uid: string;

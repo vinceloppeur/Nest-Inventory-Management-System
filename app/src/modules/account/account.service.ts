@@ -13,6 +13,11 @@ import { type Nullable } from 'app/lib/types/nullable';
 import { AccountAlreadyExistsException } from 'app/modules/account/exceptions/account-already-exists.exception';
 import { Validator } from 'app/lib/utils/validator';
 import { ValidationException } from 'app/lib/exceptions/validation.exception';
+import {
+  GetAccountInfoByEmailResponseDto,
+  type GetAccountInfoByEmailRequestDto,
+} from 'app/modules/account/dtos/get-account-by-email.dto';
+import { AccountDoesNotExistException } from 'app/modules/account/exceptions/account-does-not-exist.exception';
 
 @Injectable()
 export class AccountService {
@@ -31,7 +36,7 @@ export class AccountService {
     request: CreateAccountRequestDto,
   ): Promise<CreateAccountResponseDto> {
     const existing: Nullable<AccountEntity> =
-      await this.account_repository.find_by_email_async(request.email);
+      await this.account_repository.find_by_email(request.email);
 
     if (existing !== null) {
       throw new AccountAlreadyExistsException([
@@ -57,6 +62,33 @@ export class AccountService {
       email: account.get_email_address(),
       username: account.get_username(),
       createdAt: new Date(account.get_created_at()),
+    };
+  }
+
+  /**
+   * @public
+   * this service method must be called carefully because it returns all
+   * information about an account.
+   * @param {GetAccountInfoByEmailRequestDto} request
+   */
+  public async find_account_by_email(
+    request: GetAccountInfoByEmailRequestDto,
+  ): Promise<GetAccountInfoByEmailResponseDto> {
+    const account: Nullable<AccountEntity> =
+      await this.account_repository.find_by_email(request.email);
+
+    if (account === null) {
+      throw new AccountDoesNotExistException([
+        'no account exists with the given email',
+      ]);
+    }
+
+    return {
+      uid: account.get_uid(),
+      email: account.get_email_address(),
+      username: account.get_username(),
+      password: account.get_password(),
+      createdAt: account.get_created_at(),
     };
   }
 

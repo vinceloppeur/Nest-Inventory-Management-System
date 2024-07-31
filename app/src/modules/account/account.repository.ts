@@ -20,9 +20,7 @@ export class AccountRepository extends IRepository<AccountSchemaProps> {
     this.account_factory = account_factory;
   }
 
-  public async find_by_email_async(
-    email: string,
-  ): Promise<Nullable<AccountEntity>> {
+  public async find_by_email(email: string): Promise<Nullable<AccountEntity>> {
     const result: Nullable<AccountSchemaProps> = await this.createQueryBuilder()
       .where('account.email_address = :email', { email })
       .getOne();

@@ -1,10 +1,10 @@
 import {
-  CreateAccountRequestSchema,
+  CreateAccountSchema,
   type CreateAccountRequestDto,
   type CreateAccountResponseDto,
 } from 'app/modules/account/dtos/create-account.dto';
 
-export const SignUpRequestSchema = CreateAccountRequestSchema;
+export const SignUpSchema = CreateAccountSchema;
 
 export type SignUpRequestDto = CreateAccountRequestDto;
 
