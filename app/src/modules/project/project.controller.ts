@@ -8,11 +8,15 @@ import {
   Post,
   UseGuards,
   Version,
+  Headers,
 } from '@nestjs/common';
 
 import { type ApiResponse } from 'app/lib/apis/api-response';
 import { DtoValidationPipe } from 'app/lib/pipes/dto-validation.pipe';
+import { extract_bearer_token } from 'app/lib/utils/extract-bearer-token';
 import { AuthGuard } from 'app/modules/auth/auth.guard';
+import { AuthService } from 'app/modules/auth/auth.service';
+import { type IAuthService } from 'app/modules/auth/interfaces/auth.service.interface';
 import {
   create_project,
   type CreateProjectDto,
@@ -27,9 +31,14 @@ import { ProjectService } from 'app/modules/project/project.service';
 @UseGuards(AuthGuard)
 export class ProjectController {
   private project_service: IProjectService;
+  private auth_service: IAuthService;
 
-  public constructor(project_service: ProjectService) {
+  public constructor(
+    project_service: ProjectService,
+    auth_service: AuthService,
+  ) {
     this.project_service = project_service;
+    this.auth_service = auth_service;
   }
 
   @Version('1')
@@ -37,8 +46,16 @@ export class ProjectController {
   @HttpCode(HttpStatus.CREATED)
   public async create_project_v1(
     @Body(new DtoValidationPipe(create_project)) body: CreateProjectDto,
+    @Headers('authorization') authorization: string,
   ): Promise<ApiResponse<CreatedProjectDto>> {
-    const created = await this.project_service.create_project(body);
+    const token: string = extract_bearer_token(authorization);
+
+    const creator_uid: string = await this.auth_service.extract_uid(token);
+
+    const created = await this.project_service.create_project(
+      body,
+      creator_uid,
+    );
 
     return {
       message: 'successfuly created project',

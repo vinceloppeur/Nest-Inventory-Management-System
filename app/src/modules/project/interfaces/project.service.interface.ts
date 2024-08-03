@@ -3,7 +3,10 @@ import { type FindProjectByIdDto } from 'app/modules/project/dtos/find-project-b
 import { type CreatedProjectDto } from 'app/modules/project/dtos/created-project.response.dto';
 
 export interface IProjectService {
-  create_project(request: CreateProjectDto): Promise<CreatedProjectDto>;
+  create_project(
+    request: CreateProjectDto,
+    creator_uid: string,
+  ): Promise<CreatedProjectDto>;
 
   find_project(request: FindProjectByIdDto): Promise<CreatedProjectDto>;
 }

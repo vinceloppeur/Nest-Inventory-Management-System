@@ -11,6 +11,7 @@ import { ProjectEntity } from 'app/modules/project/project.entity';
 import { type Nullable } from 'app/lib/types/nullable';
 import { ProjectUid } from 'app/modules/project/value-objects/project-uid.vo';
 import { ProjectName } from 'app/modules/project/value-objects/project-name.vo';
+import { CreatorUid } from 'app/modules/project/value-objects/creator-uid.vo';
 
 @Injectable()
 export class ProjectRepository
@@ -26,8 +27,9 @@ export class ProjectRepository
       .insert()
       .into(ProjectSchema)
       .values({
-        project_id: entity.get_project_uid(),
-        project_name: entity.get_project_name(),
+        creator_id: entity.get_creator_uid(),
+        project_id: entity.get_uid(),
+        project_name: entity.get_name(),
       })
       .execute();
   }
@@ -48,11 +50,17 @@ export class ProjectRepository
       return null;
     }
 
+    const creator_uid: CreatorUid = new CreatorUid(result.creator_id);
+
     const project_uid: ProjectUid = new ProjectUid(result.project_id);
 
     const project_name: ProjectName = new ProjectName(result.project_name);
 
-    const project: ProjectEntity = new ProjectEntity(project_uid, project_name);
+    const project: ProjectEntity = new ProjectEntity(
+      creator_uid,
+      project_uid,
+      project_name,
+    );
 
     return project;
   }
@@ -67,11 +75,17 @@ export class ProjectRepository
       return null;
     }
 
+    const creator_uid: CreatorUid = new CreatorUid(result.creator_id);
+
     const project_uid: ProjectUid = new ProjectUid(result.project_id);
 
     const project_name: ProjectName = new ProjectName(result.project_name);
 
-    const project: ProjectEntity = new ProjectEntity(project_uid, project_name);
+    const project: ProjectEntity = new ProjectEntity(
+      creator_uid,
+      project_uid,
+      project_name,
+    );
 
     return project;
   }

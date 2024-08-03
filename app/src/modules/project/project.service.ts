@@ -13,6 +13,7 @@ import { type FindProjectByIdDto } from 'app/modules/project/dtos/find-project-b
 import { ProjectDoesNotExistException } from 'app/modules/project/exceptions/project-does-not-exist.exception';
 import { type CreatedProjectDto } from 'app/modules/project/dtos/created-project.response.dto';
 import { type FoundProjectDto } from 'app/modules/project/dtos/found-project.response.dto';
+import { CreatorUid } from 'app/modules/project/value-objects/creator-uid.vo';
 
 @Injectable()
 export class ProjectService implements IProjectService {
@@ -24,6 +25,7 @@ export class ProjectService implements IProjectService {
 
   public async create_project(
     request: CreateProjectDto,
+    creator: string,
   ): Promise<CreatedProjectDto> {
     const existing: Nullable<ProjectEntity> =
       await this.project_repository.find_entity_by_name(request.name);
@@ -34,18 +36,24 @@ export class ProjectService implements IProjectService {
       ]);
     }
 
+    const creator_uid: CreatorUid = new CreatorUid(creator);
+
     const gen: string = this.project_repository.generate_uid();
     const project_uid: ProjectUid = new ProjectUid(gen);
 
     const project_name: ProjectName = new ProjectName(request.name);
 
-    const project: ProjectEntity = new ProjectEntity(project_uid, project_name);
+    const project: ProjectEntity = new ProjectEntity(
+      creator_uid,
+      project_uid,
+      project_name,
+    );
 
     await this.project_repository.create_from_entity(project);
 
     return {
-      project_id: project.get_project_uid(),
-      project_name: project.get_project_name(),
+      project_id: project.get_uid(),
+      project_name: project.get_name(),
     };
   }
 
@@ -60,8 +68,8 @@ export class ProjectService implements IProjectService {
     }
 
     return {
-      project_id: project.get_project_uid(),
-      project_name: project.get_project_name(),
+      project_id: project.get_uid(),
+      project_name: project.get_name(),
     };
   }
 }

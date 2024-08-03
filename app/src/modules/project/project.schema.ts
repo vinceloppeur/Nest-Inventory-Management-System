@@ -1,6 +1,7 @@
 import { EntitySchema } from 'typeorm';
 
 export interface Project {
+  creator_id: string;
   project_id: string;
   project_name: string;
 }
@@ -8,6 +9,11 @@ export interface Project {
 export const ProjectSchema = new EntitySchema<Project>({
   name: 'Project',
   columns: {
+    creator_id: {
+      nullable: false,
+      type: 'varchar',
+      length: 128,
+    },
     project_id: {
       primary: true,
       type: 'varchar',
