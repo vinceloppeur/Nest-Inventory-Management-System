@@ -17,12 +17,8 @@ services:
       - "0.0.0.0:3000:3000/tcp"
     networks:
       - backend
-    environment:
-      - DATABASE_HOST=${DATABASE_HOST?error}
-      - DATABASE_USER=${DATABASE_USER?error}
-      - DATABASE_DB=${DATABASE_DB?error}
-      - DATABASE_PORT=${DATABASE_PORT?error}
-      - DATABASE_PASSWORD=${DATABASE_PASSWORD?error}
+    env_file:
+      - app/.env
 
 networks:
   backend:
