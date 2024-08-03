@@ -23,4 +23,17 @@ export const DATABASE_PASSWORD: string = env
   .required()
   .asString();
 
-export const JWT_SECRET: string = env.get('JWT_SECRET').required().asString();
+export const FIREBASE_CLIENT_EMAIL: string = env
+  .get('FIREBASE_CLIENT_EMAIL')
+  .required()
+  .asString();
+
+export const FIREBASE_PRIVATE_KEY = env
+  .get('FIREBASE_PRIVATE_KEY')
+  .required()
+  .asString();
+
+export const FIREBASE_PROJECT_ID = env
+  .get('FIREBASE_PROJECT_ID')
+  .required()
+  .asString();

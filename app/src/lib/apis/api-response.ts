@@ -1,6 +1,4 @@
-export interface ApiResponse<
-  D extends Record<string, unknown> | void = undefined,
-> {
+export interface ApiResponse<D> {
   message: string;
   data?: D;
   status: number;

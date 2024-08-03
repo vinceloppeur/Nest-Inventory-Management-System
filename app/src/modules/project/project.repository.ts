@@ -1,0 +1,85 @@
+import { Injectable } from '@nestjs/common';
+import { DataSource, Repository } from 'typeorm';
+import { uuidv7 } from 'uuidv7';
+
+import {
+  ProjectSchema,
+  type Project,
+} from 'app/modules/project/project.schema';
+import { type IProjectRepository } from 'app/modules/project/interfaces/project.repository.interface';
+import { ProjectEntity } from 'app/modules/project/project.entity';
+import { type Nullable } from 'app/lib/types/nullable';
+import { ProjectUid } from 'app/modules/project/value-objects/project-uid.vo';
+import { ProjectName } from 'app/modules/project/value-objects/project-name.vo';
+
+@Injectable()
+export class ProjectRepository
+  extends Repository<Project>
+  implements IProjectRepository
+{
+  public constructor(data_source: DataSource) {
+    super(ProjectSchema, data_source.createEntityManager());
+  }
+
+  public async create_from_entity(entity: ProjectEntity): Promise<void> {
+    await this.createQueryBuilder()
+      .insert()
+      .into(ProjectSchema)
+      .values({
+        project_id: entity.get_project_uid(),
+        project_name: entity.get_project_name(),
+      })
+      .execute();
+  }
+
+  /*
+    TODO: would be great to introduce a factory class here for the account..
+    TODO: ..entity
+   */
+  public async find_entity_by_name(
+    name: string,
+  ): Promise<Nullable<ProjectEntity>> {
+    const result: Nullable<Project> = await this.createQueryBuilder('Project')
+      .select('Project')
+      .where('Project.project_name = :project_name', { project_name: name })
+      .getOne();
+
+    if (result === null) {
+      return null;
+    }
+
+    const project_uid: ProjectUid = new ProjectUid(result.project_id);
+
+    const project_name: ProjectName = new ProjectName(result.project_name);
+
+    const project: ProjectEntity = new ProjectEntity(project_uid, project_name);
+
+    return project;
+  }
+
+  public async find_entity_by_id(id: string): Promise<Nullable<ProjectEntity>> {
+    const result: Nullable<Project> = await this.createQueryBuilder('Project')
+      .select('Project')
+      .where('Project.project_id = :project_id', { project_id: id })
+      .getOne();
+
+    if (result === null) {
+      return null;
+    }
+
+    const project_uid: ProjectUid = new ProjectUid(result.project_id);
+
+    const project_name: ProjectName = new ProjectName(result.project_name);
+
+    const project: ProjectEntity = new ProjectEntity(project_uid, project_name);
+
+    return project;
+  }
+
+  public generate_uid(): string {
+    const gen: string = uuidv7();
+    const uid: string = String().concat('INV-', gen);
+
+    return uid;
+  }
+}

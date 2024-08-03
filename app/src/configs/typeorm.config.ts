@@ -1,6 +1,5 @@
 import type { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
-import { AccountSchema } from 'app/modules/account/account.schema';
 import {
   DATABASE_DB,
   DATABASE_HOST,
@@ -18,5 +17,5 @@ export const typeorm_config: TypeOrmModuleOptions = {
   password: DATABASE_PASSWORD,
   synchronize: true,
   migrationsRun: false,
-  entities: [AccountSchema],
+  autoLoadEntities: true,
 } as const;
