@@ -4,7 +4,11 @@ import {
   cert,
   type App as FirebaseApp,
 } from 'firebase-admin/app';
-import { getAuth, type Auth as FirebaseAuth } from 'firebase-admin/auth';
+import {
+  getAuth,
+  type DecodedIdToken,
+  type Auth as FirebaseAuth,
+} from 'firebase-admin/auth';
 
 import { type IAuthService } from 'app/modules/auth/interfaces/auth.service.interface';
 import { firebase_service_account_config } from 'app/configs/firebase.config';
@@ -30,5 +34,11 @@ export class AuthService implements IAuthService {
      * try-catch
      */
     await this.auth.verifyIdToken(token, true);
+  }
+
+  public async extract_uid(token: string): Promise<string> {
+    const decoded_token: DecodedIdToken = await this.auth.verifyIdToken(token);
+
+    return decoded_token.uid;
   }
 }
