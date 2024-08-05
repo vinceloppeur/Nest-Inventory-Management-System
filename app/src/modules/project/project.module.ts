@@ -1,11 +1,19 @@
+/* vendors */
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ProjectService } from 'app/modules/project/project.service';
-import { ProjectController } from 'app/modules/project/project.controller';
+/* modules */
 import { AuthModule } from 'app/modules/auth/auth.module';
-import { ProjectSchema } from 'app/modules/project/project.schema';
+
+/* providers */
+import { ProjectService } from 'app/modules/project/project.service';
 import { ProjectRepository } from 'app/modules/project/project.repository';
+
+/* controllers */
+import { ProjectController } from 'app/modules/project/project.controller';
+
+/* schemas */
+import { ProjectSchema } from 'app/modules/project/project.schema';
 
 @Module({
   imports: [AuthModule, TypeOrmModule.forFeature([ProjectSchema])],

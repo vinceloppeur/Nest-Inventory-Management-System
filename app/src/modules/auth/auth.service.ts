@@ -26,19 +26,7 @@ export class AuthService implements IAuthService {
     this.auth = getAuth(this.firebase);
   }
 
-  /* JS async is confusing isn't it */
-  public async verify_token(token: string): Promise<void> {
-    /*
-     * the token verif is an async operation, it also throws an error and it
-     * should be awaited here to propagate the error up to the nearest
-     * try-catch
-     */
-    await this.auth.verifyIdToken(token, true);
-  }
-
-  public async extract_uid(token: string): Promise<string> {
-    const decoded_token: DecodedIdToken = await this.auth.verifyIdToken(token);
-
-    return decoded_token.uid;
+  public async decode_token(token: string): Promise<DecodedIdToken> {
+    return await this.auth.verifyIdToken(token, true);
   }
 }

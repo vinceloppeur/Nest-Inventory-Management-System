@@ -1,17 +1,24 @@
+/* vendors */
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { uuidv7 } from 'uuidv7';
+
+/* interfaces */
+import { type IProjectRepository } from 'app/modules/project/interfaces/project.repository.interface';
+
+/* domain objects */
+import { ProjectEntity } from 'app/modules/project/project.entity';
+import { CreatorUid } from 'app/modules/project/value-objects/creator-uid.vo';
+import { ProjectUid } from 'app/modules/project/value-objects/project-uid.vo';
+import { ProjectName } from 'app/modules/project/value-objects/project-name.vo';
+
+/* types */
+import { type Nullable } from 'app/lib/types/nullable';
 
 import {
   ProjectSchema,
   type Project,
 } from 'app/modules/project/project.schema';
-import { type IProjectRepository } from 'app/modules/project/interfaces/project.repository.interface';
-import { ProjectEntity } from 'app/modules/project/project.entity';
-import { type Nullable } from 'app/lib/types/nullable';
-import { ProjectUid } from 'app/modules/project/value-objects/project-uid.vo';
-import { ProjectName } from 'app/modules/project/value-objects/project-name.vo';
-import { CreatorUid } from 'app/modules/project/value-objects/creator-uid.vo';
 
 @Injectable()
 export class ProjectRepository
@@ -65,10 +72,14 @@ export class ProjectRepository
     return project;
   }
 
-  public async find_entity_by_id(id: string): Promise<Nullable<ProjectEntity>> {
+  public async find_entity_by_id(
+    creator: string,
+    id: string,
+  ): Promise<Nullable<ProjectEntity>> {
     const result: Nullable<Project> = await this.createQueryBuilder('Project')
       .select('Project')
-      .where('Project.project_id = :project_id', { project_id: id })
+      .where('Project.creator_id = :creator_id', { creator_id: creator })
+      .andWhere('Project.project_id = :project_id', { project_id: id })
       .getOne();
 
     if (result === null) {
@@ -88,6 +99,15 @@ export class ProjectRepository
     );
 
     return project;
+  }
+
+  public async delete_entity(creator: string, id: string): Promise<void> {
+    await this.createQueryBuilder()
+      .delete()
+      .from(ProjectSchema)
+      .where('creator_id = :creator_id', { creator_id: creator })
+      .andWhere('project_id = :project_id', { project_id: id })
+      .execute();
   }
 
   public generate_uid(): string {

@@ -3,9 +3,14 @@ import { APP_FILTER } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as morgan from 'morgan';
 
+/* configs */
 import { typeorm_config } from 'app/configs/typeorm.config';
-import { ExceptionBaseFilter } from 'app/lib/filters/exception-base.filter';
+
+/* modules */
 import { ProjectModule } from 'app/modules/project/project.module';
+
+/* filters */
+import { ExceptionBaseFilter } from 'app/lib/filters/exception-base.filter';
 
 @Module({
   imports: [TypeOrmModule.forRoot(typeorm_config), ProjectModule],

@@ -8,6 +8,9 @@ import { type Request } from 'express';
 import { type IAuthService } from 'app/modules/auth/interfaces/auth.service.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { UnauthenticatedException } from 'app/modules/auth/exceptions/unauthenticated.exception';
+import { DecodedIdToken } from 'firebase-admin/auth';
+import { extract_bearer_token } from 'app/lib/utils/extract-bearer-token';
+import { ValidationException } from 'app/lib/exceptions/validation.exception';
 
 /*
  * although it's annotated with @Injectable decorator, it should be noted that
@@ -25,23 +28,21 @@ export class AuthGuard implements CanActivate {
   public async canActivate(ctx: ExecutionContext): Promise<boolean> {
     const req: Request = ctx.switchToHttp().getRequest();
 
-    const bearer: string | undefined = req.headers.authorization;
-
-    if (typeof bearer === 'undefined') {
-      return false;
+    if (typeof req.headers.authorization === 'undefined') {
+      throw new ValidationException(['authorization header must be included']);
     }
 
-    const token: string[] = bearer.split(' ');
+    const token: string = extract_bearer_token(req.headers.authorization);
 
-    if (token.length !== 2) {
-      return false;
-    }
+    let decoded: DecodedIdToken;
 
     try {
-      await this.auth_service.verify_token(token[1]!);
+      decoded = await this.auth_service.decode_token(token);
     } catch (error) {
       throw new UnauthenticatedException(['ID token invalid']);
     }
+
+    Object.assign(req, { user_id: decoded.uid });
 
     return true;
   }

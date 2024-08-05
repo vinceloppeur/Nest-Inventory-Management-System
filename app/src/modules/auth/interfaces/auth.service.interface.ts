@@ -1,5 +1,5 @@
-export interface IAuthService {
-  verify_token(token: string): Promise<void>;
+import { type DecodedIdToken } from 'firebase-admin/auth';
 
-  extract_uid(token: string): Promise<string>;
+export interface IAuthService {
+  decode_token(token: string): Promise<DecodedIdToken>;
 }
