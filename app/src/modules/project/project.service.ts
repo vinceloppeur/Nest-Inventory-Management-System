@@ -24,8 +24,11 @@ import { type FoundProjectDto } from 'app/modules/project/dtos/found-project.res
 import { type DeleteProjectDto } from 'app/modules/project/dtos/delete-project.request.dto';
 
 /* exceptions */
+import { ValidationException } from 'app/lib/exceptions/validation.exception';
 import { ProjectAlreadyExistsException } from 'app/modules/project/exceptions/project-already-exists.exception';
 import { ProjectDoesNotExistException } from 'app/modules/project/exceptions/project-does-not-exist.exception';
+import { FindProjectsDto } from 'app/modules/project/dtos/find-projects.request.dto';
+import { FoundProjectsDto } from 'app/modules/project/dtos/found-projects.response.dto';
 
 @Injectable()
 export class ProjectService implements IProjectService {
@@ -85,6 +88,33 @@ export class ProjectService implements IProjectService {
       project_id: project.get_uid(),
       project_name: project.get_name(),
     };
+  }
+
+  public async find_projects(
+    request: FindProjectsDto,
+  ): Promise<FoundProjectsDto> {
+    if (request.page <= 0) {
+      throw new ValidationException(['page must be greater than 0']);
+    }
+
+    const limit: number = 25;
+    const offset: number = (request.page - 1) * limit;
+
+    const results: ProjectEntity[] =
+      await this.project_repository.find_entities(
+        request.user_id,
+        limit,
+        offset,
+      );
+
+    const projects: FoundProjectDto[] = results.map(
+      (project: ProjectEntity): FoundProjectDto => ({
+        project_id: project.get_uid(),
+        project_name: project.get_name(),
+      }),
+    );
+
+    return { projects };
   }
 
   public async delete_project(request: DeleteProjectDto): Promise<void> {

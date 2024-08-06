@@ -11,6 +11,12 @@ export interface IProjectRepository {
     id: string,
   ): Promise<Nullable<ProjectEntity>>;
 
+  find_entities(
+    creator: string,
+    limit: number,
+    offset: number,
+  ): Promise<ProjectEntity[]>;
+
   delete_entity(creator: string, id: string): Promise<void>;
 
   generate_uid(): string;

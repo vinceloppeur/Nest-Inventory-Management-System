@@ -101,6 +101,33 @@ export class ProjectRepository
     return project;
   }
 
+  public async find_entities(
+    creator: string,
+    limit: number,
+    offset: number,
+  ): Promise<ProjectEntity[]> {
+    const results: Project[] = await this.createQueryBuilder('Project')
+      .select()
+      .where('Project.creator_id = :creator_id', { creator_id: creator })
+      .take(limit)
+      .skip(offset)
+      .getMany();
+
+    const entities: ProjectEntity[] = results.map(
+      (project: Project): ProjectEntity => {
+        const creator_uid: CreatorUid = new CreatorUid(project.creator_id);
+
+        const project_uid: ProjectUid = new ProjectUid(project.project_id);
+
+        const project_name: ProjectName = new ProjectName(project.project_name);
+
+        return new ProjectEntity(creator_uid, project_uid, project_name);
+      },
+    );
+
+    return entities;
+  }
+
   public async delete_entity(creator: string, id: string): Promise<void> {
     await this.createQueryBuilder()
       .delete()

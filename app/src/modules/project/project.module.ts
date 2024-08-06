@@ -11,6 +11,7 @@ import { ProjectRepository } from 'app/modules/project/project.repository';
 
 /* controllers */
 import { ProjectController } from 'app/modules/project/project.controller';
+import { ProjectsController } from 'app/modules/project/projects.controller';
 
 /* schemas */
 import { ProjectSchema } from 'app/modules/project/project.schema';
@@ -18,6 +19,6 @@ import { ProjectSchema } from 'app/modules/project/project.schema';
 @Module({
   imports: [AuthModule, TypeOrmModule.forFeature([ProjectSchema])],
   providers: [ProjectService, ProjectRepository],
-  controllers: [ProjectController],
+  controllers: [ProjectController, ProjectsController],
 })
 export class ProjectModule {}
